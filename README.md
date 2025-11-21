@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+<h1>Better Auth + Next.js</h1>
+<p>Concise setup & run instructions. For the full guide see <code>TODO.md</code>.</p>
+</div>
 
-## Getting Started
+## Stack
 
-First, run the development server:
+Next.js (App Router) · Prisma 6.19.0 · PostgreSQL · Better Auth · shadcn/ui · Tailwind CSS v4
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Prerequisites
+
+1. Set <code>DATABASE_URL</code> in <code>.env</code> (PostgreSQL URL)
+2. Install dependencies: <code>npm install</code>
+
+## First-Time Setup
+
+```powershell
+# Apply initial migration & generate client
+npx prisma migrate dev --name init
+
+# (Optional) Generate Better Auth artifacts
+npx @better-auth/cli generate
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Scripts auto-run <code>prisma generate</code> before Next:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npm run dev   # starts Next.js + ensures Prisma Client is current
+```
 
-## Learn More
+## Adding UI Components (shadcn/ui)
 
-To learn more about Next.js, take a look at the following resources:
+```powershell
+npx shadcn@latest add button label input textarea card tooltip
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Common Commands
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```powershell
+npx prisma migrate dev --name <change>   # create & apply migration
+npx prisma generate                      # regenerate client manually
+npx prisma init                        # initializes prisma
+npx @better-auth/cli generate            # update auth generated files
+npx shadcn@latest add <component>        # add UI component
+```
 
-## Deploy on Vercel
+## Auth Config Location
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`app/lib/auth.ts` – initializes Better Auth with Prisma adapter.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Docs
+
+- Better Auth: https://www.better-auth.com/docs/basic-usage
+- Prisma: https://www.prisma.io/docs
+- Next.js: https://nextjs.org/docs
+- shadcn/ui: https://ui.shadcn.com
+
+## Troubleshooting Quickies
+
+- Missing env vars for providers → set `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` etc.
+- Client not updating → run `npx prisma generate`.
+

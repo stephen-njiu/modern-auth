@@ -30,8 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files (explicit; add .env.example if you wish to share schema)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# .env.example
 
 # vercel
 .vercel
@@ -39,3 +44,31 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/lib/generated/prisma
+
+# Editors / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS / system noise
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Generic build/cache
+dist/
+.turbo
+.cache
+logs/
+*.log
+coverage-final.json
+
+# Prisma engine binaries & metadata (schema markdown if generated)
+prisma/query-engine*
+prisma/schema.prisma.md
+
+# Image snapshot tests (if visual regression added later)
+__image_snapshots__
