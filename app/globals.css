@@ -120,3 +120,5 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Per-user request: removed global input overrides; styling handled locally at usage sites. */
