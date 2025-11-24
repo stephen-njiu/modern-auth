@@ -263,19 +263,3 @@ function SvgTwitch({ className }: { className?: string }) {
 
 // Exports
 export default SocialSignIn;
-export {
-  SvgGitHub,
-  SvgGoogle,
-  SvgTwitter,
-  SvgApple,
-  SvgLinkedIn,
-  SvgFacebook,
-  SvgDiscord,
-  SvgGitLab,
-  SvgBitbucket,
-  SvgTikTok,
-  SvgMicrosoft,
-  SvgSpotify,
-  SvgDropbox,
-  SvgTwitch,
-};

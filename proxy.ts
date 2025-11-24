@@ -7,21 +7,27 @@ export async function proxy(request: NextRequest) {
     headers: request.headers
   });
 
+  // define the paths that the user can visit without signing in
+  const publicPaths = ["/auth/login", "/auth/register", "/"];
+
   const { pathname } = new URL(request.url);
   const isLogin = pathname.startsWith("/auth/login");
   const isRegister = pathname.startsWith("/auth/register");
   const isAuthPage = isLogin || isRegister;
 
-    // THIS IS NOT SECURE!
-    // This is the recommended approach to optimistically redirect users
-    // We recommend handling auth checks in each page/route
-  // 1) If user is signed in and visits /auth/login or /auth/register, send to /profile
+  // Consider home and any explicitly listed route as public
+  const isPublic = publicPaths.some((p) => {
+    if (p === "/") return pathname === "/"; // home only
+    return pathname === p || pathname.startsWith(p + "/");
+  });
+
+
   if (session && isAuthPage) {
     return NextResponse.redirect(new URL("/profile", request.url));
   }
 
-  // 2) If user is NOT signed in and the page is NOT an auth page, send to /auth/login
-  if (!session && !isAuthPage) {
+  // 2) If user is NOT signed in and the page is NOT public, send to /auth/login
+  if (!session && !isPublic) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
