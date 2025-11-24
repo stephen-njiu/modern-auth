@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 type Provider = "github" | "google" | "twitter" | "apple" | "linkedin";
@@ -37,7 +37,6 @@ export function SocialSignIn({
       await authClient.signIn.social(
         { provider, callbackURL },
         {
-          // no success toast per request
           onError: (ctx) => {
             toast.error(ctx.error.message, { id: tid });
           },

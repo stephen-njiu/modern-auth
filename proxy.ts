@@ -2,42 +2,43 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./app/lib/auth";
 
 export async function proxy(request: NextRequest) {
-  // Use request.headers in this context
   const session = await auth.api.getSession({
-    headers: request.headers
+    headers: request.headers,
   });
 
-  // define the paths that the user can visit without signing in
+  const { pathname } = request.nextUrl;
+
   const publicPaths = ["/auth/login", "/auth/register", "/"];
 
-  const { pathname } = new URL(request.url);
   const isLogin = pathname.startsWith("/auth/login");
   const isRegister = pathname.startsWith("/auth/register");
   const isAuthPage = isLogin || isRegister;
 
-  // Consider home and any explicitly listed route as public
   const isPublic = publicPaths.some((p) => {
-    if (p === "/") return pathname === "/"; // home only
+    if (p === "/") {
+      return pathname === "/"; // exactly home
+    }
     return pathname === p || pathname.startsWith(p + "/");
   });
 
-
+  // If user is signed in but is on auth page, redirect them
   if (session && isAuthPage) {
     return NextResponse.redirect(new URL("/profile", request.url));
   }
 
-  // 2) If user is NOT signed in and the page is NOT public, send to /auth/login
+  // If not signed in and trying to go to a protected page, send to login
   if (!session && !isPublic) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
-    }
+  }
 
-    return NextResponse.next();
+  // Otherwise, let them through
+  return NextResponse.next();
 }
 
+// Only matcher is allowed in config for proxy.ts
 export const config = {
-runtime: "nodejs", // Required for auth.api calls
   matcher: [
-    // Exclude API routes, static files, image optimizations, and .png files
+    // Exclude API, static, image files etc.
     '/((?!api|_next/static|_next/image|.*\\.png$).*)',
   ],
-}
+};

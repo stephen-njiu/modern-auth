@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Sparkles } from "lucide-react";
 import { SocialSignIn } from "@/components/auth/SocialSignIn";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
