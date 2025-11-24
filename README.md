@@ -38,6 +38,8 @@ npx shadcn@latest add button label input textarea card tooltip
 
 ## Common Commands
 
+Generate app password from gmail: `https://myaccount.google.com/u/2/apppasswords`
+
 ```powershell
 npx prisma migrate dev --name <change>   # create & apply migration
 npx prisma generate                      # regenerate client manually
