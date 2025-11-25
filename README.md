@@ -1,66 +1,93 @@
 <div align="center">
-<h1>Better Auth + Next.js</h1>
-<p>Concise setup & run instructions. For the full guide see <code>TODO.md</code>.</p>
+	<h1>Modern Auth – Magic Link & Social Sign-In</h1>
+	<p>A Next.js starter tailored for passwordless authentication via Better Auth.</p>
 </div>
 
-## Stack
+<p align="center">
+	<a href="https://modern-auth-sable.vercel.app/" target="_blank" rel="noreferrer"><strong>Live Demo</strong></a>
+</p>
 
-Next.js (App Router) · Prisma 6.19.0 · PostgreSQL · Better Auth · shadcn/ui · Tailwind CSS v4
+<p align="center">
+	<a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fstephen-njiu%2Fmodern-auth" target="_blank" rel="noreferrer">
+		<img alt="Deploy with Vercel" src="https://vercel.com/button" />
+	</a>
+</p>
 
-## Prerequisites
+## Highlights
 
-1. Set <code>DATABASE_URL</code> in <code>.env</code> (PostgreSQL URL)
-2. Install dependencies: <code>npm install</code>
+- Magic-link registration and login with Better Auth’s plugin system.
+- Social providers (GitHub, Google, Twitter, Apple, LinkedIn, and more) auto-enabled via environment vars.
+- Resend delivers all transactional mail—ready for Vercel and other serverless targets.
+- Prisma 6 + PostgreSQL with custom output and bundled query engine support.
+- Tailwind v4, shadcn/ui components, and Sonner toasts for polished UX.
 
-## First-Time Setup
+## Quick Start
 
 ```powershell
-# Apply initial migration & generate client
-npx prisma migrate dev --name init
+git clone https://github.com/stephen-njiu/modern-auth.git
+cd modern-auth
+npm install
 
-# (Optional) Generate Better Auth artifacts
-npx @better-auth/cli generate
+# Apply migrations and generate the client
+npx prisma migrate deploy
+
+# Launch the dev server (scripts auto-run prisma generate)
+npm run dev
 ```
 
-## Development
+Visit `http://localhost:3000` to hit the public landing page, login, and register flows.
 
-Scripts auto-run <code>prisma generate</code> before Next:
+## Environment Variables
 
-```powershell
-npm run dev   # starts Next.js + ensures Prisma Client is current
+Add these to `.env` (or your hosting provider):
+
+| Variable                                    | Purpose                                                                                |
+| ------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                              | PostgreSQL connection string.                                                          |
+| `BETTER_AUTH_SECRET`                        | Better Auth secret key (generate via <https://www.better-auth.com/docs/installation>). |
+| `RESEND_API_KEY`                            | Resend API key for magic-link delivery.                                                |
+| `SEND_EMAIL_FROM`                           | Verified sender address (e.g. `support@cv99x.com`).                                    |
+| `NEXT_PUBLIC_API_URL`                       | Optional override for Better Auth client base URL.                                     |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | Social credentials (repeat for Google, Twitter, LinkedIn, etc.).                       |
+
+Apple additionally needs `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY`. Providers only activate when all required variables are present.
+
+> **Note:** If your Resend domain isn’t verified, email delivery will bounce. You can still authenticate entirely with social providers until verification is complete.
+
+## Project Layout
+
+- `app/lib/auth.ts` – Better Auth server setup (Prisma adapter, magic link, Resend mailer, social detection).
+- `app/lib/auth-client.ts` – Better Auth React client with magic-link plugin.
+- `components/auth/` – Magic-link forms and social sign-in UI.
+- `prisma/` – Schema + migrations (client emitted into `lib/generated/prisma`).
+
+## Scripts & Tooling
+
+```jsonc
+"postinstall": "prisma generate",   // ensures Prisma Client exists after install/deploy
+"dev": "prisma generate && next dev",
+"build": "prisma generate && next build"
 ```
 
-## Adding UI Components (shadcn/ui)
+Common commands:
 
 ```powershell
-npx shadcn@latest add button label input textarea card tooltip
-```
-
-## Common Commands
-
-Generate app password from gmail: `https://myaccount.google.com/u/2/apppasswords`
-
-```powershell
-npx prisma migrate dev --name <change>   # create & apply migration
+npx prisma migrate dev --name <change>   # iterate locally
+npx prisma migrate deploy                # apply migrations in CI/prod
 npx prisma generate                      # regenerate client manually
-npx prisma init                        # initializes prisma
-npx @better-auth/cli generate            # update auth generated files
-npx shadcn@latest add <component>        # add UI component
+npx @better-auth/cli generate            # refresh Better Auth artifacts
 ```
 
-## Auth Config Location
+## Deployment Tips
 
-`app/lib/auth.ts` – initializes Better Auth with Prisma adapter.
+- **Vercel**: Supported out of the box. Set environment variables in the project dashboard and push to `main`.
+- **Render / other containers**: SMTP works if you switch the mailer, otherwise Resend is ready to go.
+- Always run `npx prisma migrate deploy` against your production database before the first release.
 
-## Docs
+## References
 
-- Better Auth: https://www.better-auth.com/docs/basic-usage
-- Prisma: https://www.prisma.io/docs
-- Next.js: https://nextjs.org/docs
-- shadcn/ui: https://ui.shadcn.com
-
-## Troubleshooting Quickies
-
-- Missing env vars for providers → set `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` etc.
-- Client not updating → run `npx prisma generate`.
-
+- Better Auth – <https://www.better-auth.com/docs/basic-usage>
+- Prisma – <https://www.prisma.io/docs>
+- Resend – <https://resend.com/docs>
+- Next.js – <https://nextjs.org/docs>
+- shadcn/ui – <https://ui.shadcn.com>

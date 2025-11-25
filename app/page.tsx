@@ -17,7 +17,7 @@ const HomePage = () => {
           Identity Made Effortless
         </h1>
         <p className="mx-auto max-w-xl text-neutral-300 text-lg leading-relaxed">
-          A modern authentication starter with email, password and slick social sign‑in. Fast to integrate, easy to extend, styled for dark mode from the ground up.
+          A modern authentication starter with secure magic link and slick social sign‑in. Fast to integrate, easy to extend, styled for dark mode from the ground up.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Button

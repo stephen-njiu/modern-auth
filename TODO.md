@@ -1,138 +1,90 @@
-# Project TODO / Full Setup Guide
+# Deployment TODO – Modern Auth
 
-(This file contains the comprehensive sequential setup originally in README.)
+Follow this checklist to bring the project live on Vercel (or any Next.js host).
 
-<div align="center">
-<h1>Better Auth Next.js Starter – Detailed Guide</h1>
-<p><strong>Stack:</strong> Next.js (App Router) · Prisma 6.19.0 · PostgreSQL · Better Auth · shadcn/ui · Tailwind CSS v4</p>
-</div>
-
-## 1. Project Creation
-
-Created with latest `create-next-app` default settings.
-
-- App Router under `app/`
-- TypeScript
-- Tailwind CSS v4
-
-Rationale: Latest stable Next.js for React 19 compatibility.
-
-## 2. Installing Better Auth
-
-Installed `better-auth@^1.3.34` for auth flows with Prisma adapter.
-
-Auth initialization in `app/lib/auth.ts`:
-
-```ts
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@/lib/generated/prisma/client";
-
-const prisma = new PrismaClient();
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, { provider: "postgresql" }),
-});
-```
-
-## 3. Prisma Setup (v6.19.0)
-
-Both `prisma` (dev) and `@prisma/client` (runtime) installed at 6.19.0.
-Reasons:
-
-- Performance & generator improvements
-- Version alignment between CLI & client
-- Stable with modern Node & React
-
-### `npx prisma init`
-
-Creates `prisma/schema.prisma` & `prisma.config.ts` and prints next steps.
-
-### Dotenv
-
-Installed `dotenv` to load `DATABASE_URL` with Prisma config file.
-
-### Schema
-
-Models: User, Session, Account, Verification, Post.
-Generator custom output:
-
-```prisma
-generator client {
-  provider = "prisma-client"
-  output   = "../lib/generated/prisma"
-}
-```
-
-Keeps generated client locally at `lib/generated/prisma`.
-
-### `npx prisma migrate dev --name init`
-
-Creates migration folder, applies changes, generates client. Preferred over `db push` for history.
-
-## 4. Scripts Enhancement
-
-```jsonc
-"scripts": {
-  "dev": "prisma generate && next dev",
-  "build": "prisma generate && next build"
-}
-```
-
-Ensures client is fresh before running.
-
-## 5. shadcn/ui Initialization
-
-`npx shadcn@latest init` and then adding components:
+## 1. Clone & Install
 
 ```powershell
-npx shadcn@latest add tooltip button label input text
+git clone https://github.com/stephen-njiu/modern-auth.git
+cd modern-auth
+npm install
 ```
 
-Created UI primitives (button, label, input, textarea, sonner, card).
+## 2. Create the Database
 
-## 6. Better Auth CLI Generation
-
-`npx @better-auth/cli generate` – generates/updates auth schema/types. First run aborted due to missing GitHub provider secrets; second run succeeded after overwrite.
-
-## 7. Current Status
-
-- Prisma migrated
-- Auth configured
-- UI primitives added
-- Generation scripts integrated
-
-## 8. Roadmap
-
-1. Add provider env vars
-2. Session handling UI
-3. Sign-in/out flows
-4. Seed script
-5. Tests
-6. CI pipeline
-7. Deployment: ensure Prisma engines bundled on Vercel (investigate Prisma 6 custom output) – add PrismaPlugin or revert output path
-
-## 9. Commands Cheat Sheet
+1. Provision a PostgreSQL instance (Neon, Supabase, Railway, Render, etc.).
+2. Copy the connection string and set `DATABASE_URL` in your `.env`.
+3. Run the migrations once to create the schema:
 
 ```powershell
-npx prisma init
-npx prisma migrate dev --name <migration_name>
-npx prisma generate
+npx prisma migrate deploy
+```
+
+## 3. Generate a Better Auth Secret
+
+Visit <https://www.better-auth.com/docs/installation> and create a `BETTER_AUTH_SECRET`. Add it to `.env`.
+
+## 4. Set Up Resend (Magic Link Emails)
+
+1. Create a Resend account and API key.
+2. Verify a sending domain and add DNS records. Without verification, Resend will bounce emails and users must rely on social sign-in only.
+3. Add to `.env`:
+   - `RESEND_API_KEY`
+   - `SEND_EMAIL_FROM` (must match the verified domain, e.g. `support@yourdomain.com`).
+
+## 5. Configure Social Providers (Optional)
+
+For each provider you plan to offer, create an OAuth app and set credentials in `.env` (`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, etc.). Repeat for Google, Twitter/X, Apple, LinkedIn, Spotify, Dropbox, Twitch, and others supported in `app/lib/auth.ts`.
+
+### Redirect & Authorized URIs (Better Auth defaults)
+
+- Local: `http://localhost:3000/api/auth/callback/<provider>`
+- Production: `https://your-domain.com/api/auth/callback/<provider>`
+
+Add both the localhost and production URLs to the provider dashboard. Some providers also require `http://localhost:3000` and `https://your-domain.com` in the “Authorized JavaScript origins” list.
+
+Apple requires `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY` in addition to the client ID and secret.
+
+## 6. Populate `.env`
+
+Example layout:
+
+```dotenv
+DATABASE_URL="postgres://..."
+BETTER_AUTH_SECRET="..."
+RESEND_API_KEY="..."
+SEND_EMAIL_FROM="support@yourdomain.com"
+# Optional overrides
+NEXT_PUBLIC_API_URL="https://your-domain.com/api/auth"
+
+# Social providers
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+# etc.
+```
+
+## 7. Verify Locally
+
+```powershell
 npm run dev
-npx shadcn@latest add <component>
-npx @better-auth/cli generate
 ```
 
-## 10. FAQ
+Check:
 
-Why custom output? Easier inspection & bundling.
-Why prisma generate in scripts? Automatic regeneration.
-Why migrations vs db push? Versioned history.
+- Magic link flow sends an email (Resend dashboard should show delivery). If the domain isn’t verified, expect failure and rely on social login only.
+- Social sign-in redirects correctly using the callback URLs above.
 
-## 11. References
+## 8. Deploy
 
-- Next.js Docs: https://nextjs.org/docs
-- Prisma Docs: https://www.prisma.io/docs
-- Better Auth Docs: https://www.better-auth.com/docs/basic-usage
-- shadcn/ui: https://ui.shadcn.com
+1. Push your changes to GitHub.
+2. Import the repository into Vercel (or click the Deploy button in `README.md`).
+3. Add the same environment variables in the Vercel dashboard (Production + Preview).
+4. Trigger a deploy—`npm run build` already calls `prisma generate`.
 
-(End of detailed guide)
+After the first deploy, re-run `npx prisma migrate deploy` against production if new migrations were created.
+
+---
+
+

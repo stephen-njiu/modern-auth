@@ -81,7 +81,11 @@ export function SocialSignIn({
           )}
           title="Continue with GitHub"
         >
-          <SvgGitHub className="size-4" />
+          {busy === "github" ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <SvgGitHub className="size-4" />
+          )}
         </Button>
       )}
       {providers.includes("google") && (
@@ -95,7 +99,11 @@ export function SocialSignIn({
           )}
           title="Continue with Google"
         >
-          <SvgGoogle className="size-4" />
+          {busy === "google" ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <SvgGoogle className="size-4" />
+          )}
         </Button>
       )}
       {providers.includes("twitter") && (
@@ -109,7 +117,11 @@ export function SocialSignIn({
           )}
           title="Continue with Twitter"
         >
-          <SvgTwitter className="size-4" />
+          {busy === "twitter" ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <SvgTwitter className="size-4" />
+          )}
         </Button>
       )}
       {providers.includes("apple") && (
@@ -123,7 +135,11 @@ export function SocialSignIn({
           )}
           title="Continue with Apple"
         >
-          <SvgApple className="size-4" />
+          {busy === "apple" ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <SvgApple className="size-4" />
+          )}
         </Button>
       )}
       {providers.includes("linkedin") && (
@@ -137,7 +153,11 @@ export function SocialSignIn({
           )}
           title="Continue with LinkedIn"
         >
-          <SvgLinkedIn className="size-4" />
+          {busy === "linkedin" ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <SvgLinkedIn className="size-4" />
+          )}
         </Button>
       )}
     </div>
