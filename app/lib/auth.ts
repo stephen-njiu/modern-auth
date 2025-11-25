@@ -2,7 +2,8 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { magicLink } from "better-auth/plugins";
 // If your Prisma file is located elsewhere, you can change the path
-import { PrismaClient } from "@/lib/generated/prisma/client";
+// import { PrismaClient } from "@/lib/generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { Resend } from "resend";
 
 const prisma = new PrismaClient();
