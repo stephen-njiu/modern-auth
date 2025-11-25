@@ -39,9 +39,14 @@ export function SocialSignIn({
         : provider === "linkedin"
         ? "Connecting to LinkedIn..."
         : "Connecting...";
-    const tid = toast.loading(label, {
+    // const tid = toast.loading(label, {
+    //   icon: <Loader2 className="size-4 animate-spin text-fuchsia-400" />,
+    // });
+    const tid = toast(label, {
       icon: <Loader2 className="size-4 animate-spin text-fuchsia-400" />,
+      duration: Infinity,
     });
+
     try {
       await authClient.signIn.social(
         { provider, callbackURL },
