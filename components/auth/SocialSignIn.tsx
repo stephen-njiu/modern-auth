@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { authClient } from "@/app/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 type Provider = "github" | "google" | "twitter" | "apple" | "linkedin";
 
@@ -26,24 +27,41 @@ export function SocialSignIn({
     if (busy || disabled) return;
     setBusy(provider);
     onBusyChange?.(true);
-    const tid = toast.loading(
+    const label =
       provider === "github"
-        ? "GitHub..."
+        ? "Connecting to GitHub..."
         : provider === "google"
-        ? "Google..."
-        : "Twitter..."
-    );
+        ? "Connecting to Google..."
+        : provider === "twitter"
+        ? "Connecting to Twitter..."
+        : provider === "apple"
+        ? "Connecting to Apple..."
+        : provider === "linkedin"
+        ? "Connecting to LinkedIn..."
+        : "Connecting...";
+    const tid = toast.loading(label, {
+      icon: <Loader2 className="size-4 animate-spin text-fuchsia-400" />,
+    });
     try {
       await authClient.signIn.social(
         { provider, callbackURL },
         {
           onError: (ctx) => {
-            toast.error(ctx.error.message, { id: tid });
+            const fallback = "We couldn't reach the provider. Try again.";
+            const message = typeof ctx.error === "string"
+              ? ctx.error
+              : ctx.error?.message || fallback;
+            toast.error(message, { id: tid ?? undefined });
+            setBusy(null);
+            onBusyChange?.(false);
           },
         }
       );
     } catch (e: any) {
-      toast.error(e?.message || "Sign in failed", { id: tid });
+      const fallback = "Sign in failed. Please try again.";
+      const message = typeof e === "string" ? e : e?.message || fallback;
+      toast.error(message, { id: tid ?? undefined });
+    } finally {
       setBusy(null);
       onBusyChange?.(false);
     }
