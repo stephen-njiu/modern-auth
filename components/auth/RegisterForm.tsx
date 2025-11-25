@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { SocialSignIn } from "@/components/auth/SocialSignIn";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -30,7 +30,11 @@ export default function RegisterForm() {
           newUserCallbackURL: "/profile",
         },
         {
-          onRequest: () => { tid = toast.loading("Sending magic link..."); },
+          onRequest: () => {
+            tid = toast.loading("Sending magic link...", {
+              icon: <Loader2 className="size-4 animate-spin text-fuchsia-400" />,
+            });
+          },
           onSuccess: () => {
             toast.success(
               <span className="flex items-center gap-1">
@@ -46,19 +50,19 @@ export default function RegisterForm() {
             const message = typeof ctx.error === "string"
               ? ctx.error
               : ctx.error?.message || fallback;
-            toast.error(message, { id: tid });
+            toast.error(message, { id: tid ?? undefined });
           },
         }
       );
       if (error) {
         const fallback = "We couldn't send the link. Please try again.";
         const message = typeof error === "string" ? error : error?.message || fallback;
-        toast.error(message, { id: tid });
+        toast.error(message, { id: tid ?? undefined });
         return;
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unexpected error sending the link.";
-      toast.error(message, { id: tid });
+      toast.error(message, { id: tid ?? undefined });
     } finally {
       setLoading(false);
     }
