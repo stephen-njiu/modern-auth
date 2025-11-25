@@ -1,12 +1,12 @@
 {
   "functions": {
-    "api/**/*.js": {
+    "app/**/*.js": {
       "includeFiles": "node_modules/.prisma/client/**"
     },
-    "api/**/*.mjs": {
+    "app/**/*.mjs": {
       "includeFiles": "node_modules/.prisma/client/**"
     },
-    "api/**/*.ts": {
+    "app/**/*.ts": {
       "includeFiles": "node_modules/.prisma/client/**"
     }
   }
