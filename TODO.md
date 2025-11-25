@@ -109,6 +109,7 @@ Created UI primitives (button, label, input, textarea, sonner, card).
 4. Seed script
 5. Tests
 6. CI pipeline
+7. Deployment: ensure Prisma engines bundled on Vercel (investigate Prisma 6 custom output) – add PrismaPlugin or revert output path
 
 ## 9. Commands Cheat Sheet
 
