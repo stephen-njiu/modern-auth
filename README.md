@@ -3,6 +3,13 @@
 	<p>A Next.js starter tailored for passwordless authentication via Better Auth.</p>
 </div>
 
+<div align="center">
+
+For a more customizable, updated passwordless template configurable by the `.env` file, see [**Passwordless**](https://github.com/stephen-njiu/passwordless)
+
+</div>
+
+
 <p align="center">
 	<a href="https://modern-auth-sable.vercel.app/" target="_blank" rel="noreferrer"><strong>Live Demo</strong></a>
 </p>
